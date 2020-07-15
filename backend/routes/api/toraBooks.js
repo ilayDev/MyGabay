@@ -34,10 +34,28 @@ async function addNewToraBook(req,res,next){
     }
 }
 
+
+router.get('/bookForShabat',getBooksHaveAzcara ,async(req,res)=>{
+    if(typeof res.books == 'undefined' || res.books.length == 0 )
+    {
+        res.books = await ToraBook.find({});
+    }
+    
+    // let choosenBook = res.books.sort({score: 1}).limit(1);
+    // let choosenBook = res.books.sort((a,b)=> (a.score>b.score)? 1: -1)[0];
+    let choosenBook = res.books.reduce((prev, curr)=> {
+        return prev.usageScore < curr.usageScore ? prev : curr;
+    });
+
+    choosenBook.usageScore = choosenBook.usageScore +1;
+    choosenBook.save();
+
+    res.json(choosenBook);
+    });
+
 router.get('/BooksHaveAzcara',getBooksHaveAzcara,(req,res)=>{
     res.json(res.books);
 });
-
 
 async function getBooksHaveAzcara(req,res,next) {
     const today = new hebcal.HDate();
