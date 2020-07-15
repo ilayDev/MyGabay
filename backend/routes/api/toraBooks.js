@@ -10,26 +10,7 @@ router.get('/', async(req,res)=>{
 })
 
 
-//for dev porpose
-router.post('/hasToday', async(req,res)=>{
-    const toraBook = new ToraBook({
-        name: req.body.name,
-        azcaraDates: [new hebcal.HDate()]
-    })
-    try {
-        const newBook = await toraBook.save();
-        res.status(201).json(newBook);
-
-    } catch (err) {
-        console.error(err);
-        res.status(400).json({messge: err});
-    }
-});
-
-
 router.post('/', addNewToraBook);
-
-
 
 async function addNewToraBook(req,res,next){
     let dates= req.body.azcaraDates;
@@ -53,22 +34,12 @@ async function addNewToraBook(req,res,next){
     }
 }
 
-router.post('/hasToday', async(req,res)=>{
-    const toraBook = new ToraBook({
-        name: req.body.name,
-        azcaraDates: [new hebcal.HDate()]
-    })
-    try {
-        const newBook = await toraBook.save();
-        res.status(201).json(newBook);
-
-    } catch (err) {
-        console.error(err);
-        res.status(400).json({messge: err});
-    }
+router.get('/BooksHaveAzcara',getBooksHaveAzcara,(req,res)=>{
+    res.json(res.books);
 });
 
-async function getSeferHasAzcara(req,res,next) {
+
+async function getBooksHaveAzcara(req,res,next) {
     const today = new hebcal.HDate();
     let week = [];
     let day = today;
@@ -84,7 +55,7 @@ async function getSeferHasAzcara(req,res,next) {
             booksWithAzcaraThisWeek.push(booksWithAzcara);
         }
         bookWithAzcaraThisWeek = booksWithAzcaraThisWeek.flat(1);
-        res.book = bookWithAzcaraThisWeek;
+        res.books = bookWithAzcaraThisWeek;
     }
     catch (err) {
         res.status(500).json({ messge: err.messge });
@@ -92,6 +63,21 @@ async function getSeferHasAzcara(req,res,next) {
     next();
 }
 
+//for dev porpose
+router.post('/hasToday', async(req,res)=>{
+    const toraBook = new ToraBook({
+        name: req.body.name,
+        azcaraDates: [new hebcal.HDate()]
+    })
+    try {
+        const newBook = await toraBook.save();
+        res.status(201).json(newBook);
+
+    } catch (err) {
+        console.error(err);
+        res.status(400).json({messge: err});
+    }
+});
 
 
 module.exports = router;
