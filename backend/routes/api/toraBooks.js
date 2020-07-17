@@ -65,15 +65,22 @@ async function getBooksHaveAzcara(req,res,next) {
         week.push(day);
         day = day.next();
     }
+
     try {
         //find all the books that has azcara next Week
         let booksWithAzcaraThisWeek = [];
+        
         for (const d of week) {
-            let booksWithAzcara = await ToraBook.find({ azcaraDates: d });
+            let books = await ToraBook.find({});
+            let booksWithAzcara =  books.filter(book=>{
+                return book.azcaraDates.some(date=>{
+                   return date.month== d.month &&
+                    date.day == d.day;
+                });
+            });    
             booksWithAzcaraThisWeek.push(booksWithAzcara);
         }
-        bookWithAzcaraThisWeek = booksWithAzcaraThisWeek.flat(1);
-        res.books = bookWithAzcaraThisWeek;
+        res.books =booksWithAzcaraThisWeek.flat(1);
     }
     catch (err) {
         res.status(500).json({ messge: err.messge });
