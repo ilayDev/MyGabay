@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const app= express();
+const cors = require('cors');
 const bodyParser = require('body-parser');
 
 mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology:true })
@@ -11,6 +12,7 @@ db.once('open', () => console.log('connected to database'))
 
 require('./models/ToraBook');
 
+app.use(cors());
 app.use(bodyParser.json());
 app.use(require('./routes'));
 
