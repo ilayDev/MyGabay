@@ -4,6 +4,11 @@ const ToraBook = mongoose.model('ToraBook');
 const hebcal = require('hebcal');
 
 
+var bookForShabatCache = {
+    parasha: '',
+    book: null
+};
+
 router.get('/', async(req,res)=>{
     var books = await ToraBook.find({});
     res.status(200).json(books);
@@ -34,21 +39,55 @@ async function addNewToraBook(req,res,next){
     }
 }
 
+function getBookFromCache(req,res,next){
+    if(isAlreadyCached())
+    {
+        res.status(200).json(bookForShabatCache.book);
+    }
+    else
+    {
+        next();
+    }
+}
 
-router.get('/bookForShabat',getBooksHaveAzcara ,async(req,res)=>{
+function isAlreadyCached()
+{
+    let today = new hebcal.HDate();
+    let nextParasha = today.getSedra('h');
+
+    let cachedParasha = bookForShabatCache.parasha;
+
+    let i = nextParasha.length;
+    while (i--) {
+        if (cachedParasha[i] !== nextParasha[i]) return false;
+    }
+    return true
+}
+
+function saveBookInCache(choosenBook)
+{   
+    let today = new hebcal.HDate();
+    let nextParasha = today.getSedra('h');
+    bookForShabatCache = {
+        parasha: nextParasha,
+        book: choosenBook
+    };
+}
+
+
+router.get('/bookForShabat',getBookFromCache ,getBooksHaveAzcara ,async(req,res)=>{
     if(typeof res.books == 'undefined' || res.books.length == 0 )
     {
         res.books = await ToraBook.find({});
     }
     
-    // let choosenBook = res.books.sort({score: 1}).limit(1);
-    // let choosenBook = res.books.sort((a,b)=> (a.score>b.score)? 1: -1)[0];
     let choosenBook = res.books.reduce((prev, curr)=> {
         return prev.usageScore < curr.usageScore ? prev : curr;
     });
 
     choosenBook.usageScore = choosenBook.usageScore +1;
     choosenBook.save();
+    saveBookInCache(choosenBook);
 
     res.json(choosenBook);
     });
