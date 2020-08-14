@@ -1,0 +1,13 @@
+<div >
+<!--     
+    <ul>
+        <li *ngFor="let book from toraBooks">
+            <app-show-book>[toraBook]="book"</app-show-book>
+            
+        </li>>
+
+    </ul> -->
+
+    <app-show-book *ngFor="let book of toraBooks" [toraBook]= "book"> </app-show-book>
+
+</div>
