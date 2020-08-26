@@ -9,6 +9,7 @@ import { ShowAllBooksComponent } from './components/manage-books/show-all-books/
 import { ShowBookComponent } from './components/manage-books/show-book/show-book.component';
 import { HebDatePipe } from './pipes/hebDate.pipe';
 import { AppRoutingModule } from './app-routing.module';
+import { MainContainerComponent } from './components/main-page/main-container/main-container.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { AppRoutingModule } from './app-routing.module';
     ShabatParashaComponent,
     ShowAllBooksComponent,
     ShowBookComponent,
-    HebDatePipe
+    HebDatePipe,
+    MainContainerComponent
   ],
   imports: [
     BrowserModule,
