@@ -1,10 +1,21 @@
 <div class="tora-book">
+
     <div class="book-name"> 
+        שם:
         {{ toraBook.name }}
     </div>
+
+    <br>
     <div class="book-azcara">
-        {{ toraBook.azcaraDates[0].day }}
+        תאריך אזכרה:
+        <ul>
+            <li *ngFor = " let azcara of toraBook.azcaraDates">
+                    {{azcara | hebDate}}
+            </li>
+        </ul>
     </div>
+<br>
+<br>
 
 </div>
 
