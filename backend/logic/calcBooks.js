@@ -1,0 +1,171 @@
+//make a match {azcaraBook, parasha/holiday}
+//the rest {low score book, rest parasha/holiday}
+//save the match to DB 
+
+
+const hebcore = require('@hebcal/core');
+const hebrewCalender = hebcore.HebrewCalendar;
+const mongoose = require('mongoose');
+const ToraBook = mongoose.model('ToraBook');
+/**
+ * get the next day in week for HDate
+ * @param {day in week, 0:sunday 6:saturday} day 
+ * @param {HDate date} date 
+ */
+function getNextDay(day, date =new Date())
+{
+    date.setDate(date.getDate() + (day+(7-date.getDay())) % 7);
+    return date;
+}
+
+var calcBooksDate = getNextDay(0);
+calcBooksDate.setHours(0, 30);
+var now = new Date();
+
+var firstCalcTrigger =  calcBooksDate.getTime() - now.getTime();
+var weekInMilliSecs = 7*24*60*60*1000; 
+
+// calc books for next week every sundays
+setTimeout(() => {
+    let calcDate = new Date();
+    calcBooksForWeek(new hebcore.HDate(calcDate));
+    setInterval(() => {
+        let calcDate = new Date();
+        calcBooksForWeek(hebcore.HDate(calcDate));
+    }, weekInMilliSecs);
+}, firstCalcTrigger);
+
+function getBooksForWeek(){
+    
+
+}
+
+async function calcBooksForWeek(hebDate= new hebcore.HDate()) {
+    //TODO: notice if it running when the day isn't saturday
+    var nextFriday = hebDate.after(0).after(6);//friday of the next week
+    var events = getEventsBetweenDates(hebDate, nextFriday);
+    var shabat = hebDate.after(0);
+
+    const readingDays = [...events]
+    if(hebrewCalender.getHolidaysOnDate(shabat,true)===undefined){
+        var upcomingParasha = getUpcomingParasha(hebDate);
+        readingDays.unshift(upcomingParasha);
+    }
+
+    let booksWithAzcara =await getBooksHaveAzcara(hebDate);
+    try {
+        var toraBooks = await ToraBook.find({});
+    } catch (error) {
+        console.log(error.message);
+    }
+    try{ 
+        var booksForWeek=[];
+        for (const day of readingDays) {
+            let choosenBook = toraBooks.reduce(function (prev, curr){
+                return prev.usageScore < curr.usageScore ? prev : curr;
+                }); 
+
+            let bookForDay ={
+                parasha: day,
+                book: choosenBook
+            }
+            booksForWeek.push(bookForDay);
+            let index = toraBooks.indexOf(choosenBook);
+            toraBooks.splice(index,1)
+            saveChoosenBook(bookForDay);
+        }
+    }
+    catch(err){
+        console.log(err.message);
+    }
+    return booksForWeek;
+}
+
+function getUpcomingParasha(hebDate) {
+    const parashot = new hebcore.Sedra(hebDate.getFullYear(), true);
+    const upcomingParasha = parashot.getString(hebDate, 'he');
+    return upcomingParasha;
+}
+
+function getEventsBetweenDates(startDate, endDate){
+    let day = startDate;
+    var events = [];
+    while (!day.isSameDate(endDate)) {
+        events.push(hebrewCalender.getHolidaysOnDate(day,true));
+        day = day.next();
+    }
+    
+    events = events.flat(1);
+    //filter falsy elements('undefined') and get only chag events(with sefer tora)
+    events = events.filter(event=> event && event.getFlags()%2 == 1) 
+    events = events.map(ev=>ev.render('he') );
+
+    return events;
+}
+
+/**
+ * return all the holidays with sefer tora reading until shabat(inclusive)
+ * @param {start Date for calc} calcDate 
+ */
+function getEventsUntilShabat(hebDate) {
+    let day = hebDate;
+    do {
+        var events = [];
+        events.push(hebrewCalender.getHolidaysOnDate(day,true));
+        day = day.next();
+    } while (day.getDay() !== 0); //calc until next shabat(inclusive)
+
+    events = events.flat(1);
+    //filter falsy elements('undefined') and get only chag events(with sefer tora)
+    events = events.filter(event=> event && event.getFlags()%2 == 1) 
+    events = events.map(ev=>ev.render('he') );
+
+    return events;
+}
+
+/**
+ * finds books have azcara in the week of the startDate 
+ */
+async function getBooksHaveAzcara(startDate){
+    let week = [];
+    let day = startDate;
+    for (let index = 0; index < 7; index++) {
+        week.push(day);
+        day = day.next();
+    }
+
+    try {
+        //find all the books that has azcara next Week
+        let booksWithAzcaraThisWeek = [];
+        
+        for (const d of week) {
+            let books = await ToraBook.find({});
+            let booksWithAzcara =  books.filter(book=>{
+                return book.azcaraDates.some(date=>{
+                   return date.month== d.month &&
+                    date.day == d.day;
+                });
+            });    
+            booksWithAzcaraThisWeek.push(booksWithAzcara);
+        }
+        booksWithAzcaraThisWeek = booksWithAzcaraThisWeek.flat(1);
+        booksWithAzcaraThisWeek.sort((b1,b2)=> b1.usageScore - b2.usageScore);
+        return booksWithAzcaraThisWeek;
+    }
+    catch (err) {
+        console.error("error in getBooksHaveAzcara", err.message);
+    }
+}
+
+function saveChoosenBook(bookForDay){
+    //increase score and save
+    // save match of book and event/sedra to booksHistory collection
+    bookForDay.book.usageScore = bookForDay.book.usageScore +1;
+    bookForDay.book.save();
+   // saveBookInCache(bookForDay);
+
+
+
+}
+
+module.exports = {calcBooksForWeek, getBooksHaveAzcara};
