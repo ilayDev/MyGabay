@@ -41,25 +41,43 @@ function getBooksForWeek(){
 }
 
 async function calcBooksForWeek(hebDate= new hebcore.HDate()) {
-    //TODO: notice if it running when the day isn't saturday
-    var nextFriday = hebDate.after(0).after(6);//friday of the next week
-    var events = getEventsBetweenDates(hebDate, nextFriday);
-    var shabat = hebDate.after(0);
+    var upcomingParasha = getUpcomingParasha(hebDate);
+    var readingDays = [upcomingParasha];
 
-    const readingDays = [...events]
-    if(hebrewCalender.getHolidaysOnDate(shabat,true)===undefined){
-        var upcomingParasha = getUpcomingParasha(hebDate);
-        readingDays.unshift(upcomingParasha);
+    const shabat = hebDate.after(0);
+    const holidayOnShabat = hebrewCalender.getHolidaysOnDate(shabat,true);
+    if(holidayOnShabat!== undefined && holidayOnShabat[0] instanceof hebcore.RoshChodeshEvent){
+        readingDays = [...readingDays, holidayOnShabat[0].render('he') ];
     }
 
+    
+    const nextFriday = hebDate.after(6).after(5); //friday of the next week
+    const nextSunday =  hebDate.after(6).after(0); //sunday of the next week
+    const events = getHolidaysBetweenDates(nextSunday, nextFriday); //events in the next week(after shabat)
+
+    var readingDays = [...readingDays, ...events];
+    
     let booksWithAzcara =await getBooksHaveAzcara(hebDate);
     try {
         var toraBooks = await ToraBook.find({});
     } catch (error) {
         console.log(error.message);
     }
-    try{ 
+    try{
         var booksForWeek=[];
+        booksWithAzcara.forEach(book=> {
+            let readingDay = readingDays.shift();
+            //extendMethod
+            let bookForDay ={
+                parasha: readingDay,
+                book: book
+            };
+            booksForWeek.push(bookForDay);
+            let index = toraBooks.indexOf(book);
+            toraBooks.splice(index,1)
+            saveChoosenBook(bookForDay);
+            
+        });
         for (const day of readingDays) {
             let choosenBook = toraBooks.reduce(function (prev, curr){
                 return prev.usageScore < curr.usageScore ? prev : curr;
@@ -68,7 +86,7 @@ async function calcBooksForWeek(hebDate= new hebcore.HDate()) {
             let bookForDay ={
                 parasha: day,
                 book: choosenBook
-            }
+            };
             booksForWeek.push(bookForDay);
             let index = toraBooks.indexOf(choosenBook);
             toraBooks.splice(index,1)
@@ -87,7 +105,7 @@ function getUpcomingParasha(hebDate) {
     return upcomingParasha;
 }
 
-function getEventsBetweenDates(startDate, endDate){
+function getHolidaysBetweenDates(startDate, endDate){
     let day = startDate;
     var events = [];
     while (!day.isSameDate(endDate)) {
@@ -97,7 +115,7 @@ function getEventsBetweenDates(startDate, endDate){
     
     events = events.flat(1);
     //filter falsy elements('undefined') and get only chag events(with sefer tora)
-    events = events.filter(event=> event && event.getFlags()%2 == 1) 
+    events = events.filter(event=> event && event.getFlags()%2 == 1 ) 
     events = events.map(ev=>ev.render('he') );
 
     return events;
