@@ -64,39 +64,37 @@ async function calcBooksForWeek(hebDate= new hebcore.HDate()) {
         console.log(error.message);
     }
     try{
+        //first, make match for books with azcara
         var booksForWeek=[];
         booksWithAzcara.forEach(book=> {
             let readingDay = readingDays.shift();
-            //extendMethod
-            let bookForDay ={
-                parasha: readingDay,
-                book: book
-            };
-            booksForWeek.push(bookForDay);
-            let index = toraBooks.indexOf(book);
-            toraBooks.splice(index,1)
-            saveChoosenBook(bookForDay);
-            
+            MatchBookToDay(readingDay, book, booksForWeek, toraBooks);
         });
+
+        //make match for the rest of the reading days
         for (const day of readingDays) {
+            //get the book with minimum usageScore
             let choosenBook = toraBooks.reduce(function (prev, curr){
                 return prev.usageScore < curr.usageScore ? prev : curr;
                 }); 
-
-            let bookForDay ={
-                parasha: day,
-                book: choosenBook
-            };
-            booksForWeek.push(bookForDay);
-            let index = toraBooks.indexOf(choosenBook);
-            toraBooks.splice(index,1)
-            saveChoosenBook(bookForDay);
+            MatchBookToDay(day, choosenBook, booksForWeek, toraBooks);
         }
     }
     catch(err){
         console.log(err.message);
     }
     return booksForWeek;
+}
+
+function MatchBookToDay(readingDay, book, booksForWeek, toraBooks) {
+    let bookForDay = {
+        parasha: readingDay,
+        book: book
+    };
+    booksForWeek.push(bookForDay);
+    let index = toraBooks.indexOf(book);
+    toraBooks.splice(index, 1);
+    saveChoosenBook(bookForDay);
 }
 
 function getUpcomingParasha(hebDate) {
