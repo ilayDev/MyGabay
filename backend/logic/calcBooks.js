@@ -1,12 +1,10 @@
-//make a match {azcaraBook, parasha/holiday}
-//the rest {low score book, rest parasha/holiday}
-//save the match to DB 
-
-
 const hebcore = require('@hebcal/core');
 const hebrewCalender = hebcore.HebrewCalendar;
 const mongoose = require('mongoose');
 const ToraBook = mongoose.model('ToraBook');
+const ReadingHistory = mongoose.model('ReadingHistory');
+
+
 /**
  * get the next day in week for HDate
  * @param {day in week, 0:sunday 6:saturday} day 
@@ -173,12 +171,28 @@ async function getBooksHaveAzcara(startDate){
     }
 }
 
-function saveChoosenBook(bookForDay){
+async function saveChoosenBook(bookForDay){
     //increase score and save
-    // save match of book and event/sedra to booksHistory collection
     bookForDay.book.usageScore = bookForDay.book.usageScore +1;
     bookForDay.book.save();
-   // saveBookInCache(bookForDay);
+    
+    // save match of book and event/sedra to booksHistory collection
+    let bookToSave = new ReadingHistory({
+        readingDay: bookForDay.parasha,
+        bookName: bookForDay.book.name,
+        bookId: bookForDay.book._id
+    });
+
+    try {
+        const addToHistory = await bookToSave.save();
+
+    } catch (err) {
+        console.log(`cant to book history 
+                    ${err.message}`);
+    
+    }
+
+    // saveBookInCache(bookForDay);
 
 
 
