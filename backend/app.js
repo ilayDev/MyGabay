@@ -11,7 +11,7 @@ db.on('error', (error) => console.error(error))
 db.once('open', () => console.log('connected to database'))
 
 require('./models/ToraBook');
-require('./models/BooksHistory');
+require('./models/ReadingHistory');
 
 app.use(cors());
 app.use(bodyParser.json());
