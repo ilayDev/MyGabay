@@ -33,10 +33,6 @@ setTimeout(() => {
     }, weekInMilliSecs);
 }, firstCalcTrigger);
 
-function getBooksForWeek(){
-    
-
-}
 
 async function getBooksForWeek(hebDate= new hebcore.HDate()) {
     var readingDays = getReadingDays(hebDate);
@@ -83,7 +79,7 @@ async function calcBooksForWeek(hebDate, readingDays) {
 
         for (const azcaraBook of booksWithAzcara) {
             let readingDay = readingDays.shift();
-            await MatchBookToDay(readingDay, azcaraBook, booksForWeek, toraBooks);
+            await MatchBookToDay(readingDay, azcaraBook, booksForWeek, toraBooks, true);
         }
 
         //make match for the rest of the reading days
@@ -116,11 +112,11 @@ function getReadingDays(hebDate) {
     const nextSunday = hebDate.after(6).after(0); //sunday of the next week
     const events = getHolidaysBetweenDates(nextSunday, nextFriday); //events in the next week(after shabat)
 
-    var readingDays = [...readingDays, ...events];
+    readingDays = [...readingDays, ...events];
     return readingDays;
 }
 
-async function MatchBookToDay(day, book, booksForWeek, toraBooks) {
+async function MatchBookToDay(day, book, booksForWeek, toraBooks, hasAzcara = false) {
     //increase score and save
     try {
         book.usageScore = book.usageScore +1;
@@ -134,6 +130,7 @@ async function MatchBookToDay(day, book, booksForWeek, toraBooks) {
     let bookToSave = new ReadingHistory({
         readingDay: day,
         bookName: book.name,
+        hasAzcara: hasAzcara,
         bookId: book._id
     });
 
