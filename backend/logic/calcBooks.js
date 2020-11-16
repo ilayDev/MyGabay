@@ -3,7 +3,7 @@ const hebrewCalender = hebcore.HebrewCalendar;
 const mongoose = require('mongoose');
 const ReadingHistory = mongoose.model('ReadingHistory');
 const ToraBook = mongoose.model('ToraBook');
-
+const flags = hebcore.flags;
 
 /**
  * get the next day in week for HDate
@@ -101,10 +101,15 @@ function getReadingDays(hebDate) {
     var upcomingParasha = getUpcomingParasha(hebDate);
     var readingDays = [upcomingParasha];
 
-    const shabat = hebDate.after(0);
-    const holidayOnShabat = hebrewCalender.getHolidaysOnDate(shabat, true);
-    if (holidayOnShabat !== undefined && holidayOnShabat[0] instanceof hebcore.RoshChodeshEvent) {
-        readingDays = [...readingDays, holidayOnShabat[0].render('he')];
+    const shabat = hebDate.after(6);
+    const holidaysOnShabat = hebrewCalender.getHolidaysOnDate(shabat, true);
+    if (holidaysOnShabat !== undefined ) {
+        shabatReading = holidaysOnShabat.reduce((filtered, hol) => {
+            if (hol.getFlags() === flags.ROSH_CHODESH || hol.getFlags() === flags.SPECIAL_SHABBAT)
+                filtered.push(hol.render('he'));
+            return filtered;
+        }, []);
+        readingDays = [...readingDays, ...shabatReading];
     }
 
 
