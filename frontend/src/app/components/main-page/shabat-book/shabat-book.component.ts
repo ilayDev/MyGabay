@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {ToraBook } from '../../../models'
-import { ShabatBookService } from '../../../services/shabat-book.service'
+import {ReadingBook} from '../../../models';
+import {BooksForWeekService} from '../../../services/books-for-week.service';
 // import { from } from 'rxjs';
 @Component({
   selector: 'app-shabat-book',
@@ -8,8 +8,8 @@ import { ShabatBookService } from '../../../services/shabat-book.service'
   styleUrls: ['./shabat-book.component.css']
 })
 export class ShabatBookComponent implements OnInit {
-  shabatBook: ToraBook;
-  constructor(private shabatBookService:ShabatBookService ) { }
+  shabatBooks: ReadingBook[];
+  constructor(private shabatBookService: BooksForWeekService ) { }
   // constructor() { }
 
   ngOnInit(): void {
@@ -17,6 +17,6 @@ export class ShabatBookComponent implements OnInit {
   }
 
   getShabatBook(): void{
-    this.shabatBookService.getBookForShabat().subscribe(book=>this.shabatBook = book);
+    this.shabatBookService.getBookForShabat().subscribe(books => this.shabatBooks = books);
   }
 }

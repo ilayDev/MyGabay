@@ -1,18 +1,18 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ToraBook } from '../models';
+import {ReadingBook} from '../models';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ShabatBookService {
-  path = 'toraBooks/bookForShabat';
+export class BooksForWeekService {
+  path = 'toraBooks/bookForWeek';
 
   constructor(private http: HttpClient) { }
-  
-  getBookForShabat():Observable<ToraBook>{
-    return this.http.get<ToraBook>(`${environment.api_url}${this.path}`);
+
+  getBookForShabat(): Observable<ReadingBook[]>{
+    return this.http.get<ReadingBook[]>(`${environment.api_url}${this.path}`);
   }
 }

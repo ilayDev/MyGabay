@@ -1,6 +1,12 @@
 <div class="shabat-book">
     ספר תורה לשבת:
-    <div class="book-name">
-        {{shabatBook.name}}
-    </div>
+    <!--div class="book-name">
+        {{shabatBooks[0].bookName}}
+    </div -->
+
+  <div *ngFor="let book of shabatBooks">
+    <div>{{book.readingDay}}:</div>
+    <div>{{book.bookName}}</div>
+    <div *ngIf="book.hasAzcara"> יש אזכרה</div>
+  </div>
 </div>
