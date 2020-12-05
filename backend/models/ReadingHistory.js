@@ -1,19 +1,19 @@
 const mongoose = require('mongoose');
 
-var ReadingHistoryScheme = new mongoose.Schema({
-    readingDay:{
+const ReadingHistoryScheme = new mongoose.Schema({
+    readingDay: {
         type: String,
         required: true
     },
-    bookName:{
+    bookName: {
         type: String,
         required: true
     },
-    hasAzcara:{
+    hasAzcara: {
         type: Boolean,
         required: true
     },
-    bookId:{
+    bookId: {
         type: String,
         required: true
     }

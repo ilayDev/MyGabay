@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class BooksForWeekService {
-  path = 'toraBooks/bookForWeek';
+  path = 'calc/bookForWeek';
 
   constructor(private http: HttpClient) { }
 

@@ -3,12 +3,12 @@ const hebrewCalender = hebcore.HebrewCalendar;
 const mongoose = require('mongoose');
 const ReadingHistory = mongoose.model('ReadingHistory');
 const ToraBook = mongoose.model('ToraBook');
-const flags = hebcore.flags;
+const EventsTypes = hebcore.flags;
 
 /**
  * get the next day in week for HDate
- * @param {day in week, 0:sunday 6:saturday} day 
- * @param {HDate date} date 
+ * @param {number} day - day in week, 0:sunday 6:saturday
+ * @param {HDate} date
  */
 function getNextDay(day, date =new Date())
 {
@@ -16,20 +16,20 @@ function getNextDay(day, date =new Date())
     return date;
 }
 
-var calcBooksDate = getNextDay(0);
+const calcBooksDate = getNextDay(0);
 calcBooksDate.setHours(0, 30);
-var now = new Date();
+const now = new Date();
 
-var firstCalcTrigger =  calcBooksDate.getTime() - now.getTime();
-var weekInMilliSecs = 7*24*60*60*1000; 
+const firstCalcTrigger =  calcBooksDate.getTime() - now.getTime();
+const weekInMilliSecs = 7*24*60*60*1000;
 
 // calc books for next week every sundays
 setTimeout(() => {
     let calcDate = new Date();
-    getBooksForWeek(new hebcore.HDate(calcDate));
+    getBooksForWeek(new hebcore.HDate(calcDate)).then();
     setInterval(() => {
         let calcDate = new Date();
-        getBooksForWeek(hebcore.HDate(calcDate));
+        getBooksForWeek(hebcore.HDate(calcDate)).then();
     }, weekInMilliSecs);
 }, firstCalcTrigger);
 
@@ -85,10 +85,10 @@ async function calcBooksForWeek(hebDate, readingDays) {
         //make match for the rest of the reading days
         for (const day of readingDays) {
             //get the book with minimum usageScore
-            let choosenBook = toraBooks.reduce(function (prev, curr) {
+            let chosenBook = toraBooks.reduce(function (prev, curr) {
                 return prev.usageScore < curr.usageScore ? prev : curr;
             });
-            await MatchBookToDay(day, choosenBook, booksForWeek, toraBooks);
+            await MatchBookToDay(day, chosenBook, booksForWeek, toraBooks);
         }
     }
     catch (err) {
@@ -104,8 +104,8 @@ function getReadingDays(hebDate) {
     const shabat = hebDate.after(6);
     const holidaysOnShabat = hebrewCalender.getHolidaysOnDate(shabat, true);
     if (holidaysOnShabat !== undefined ) {
-        shabatReading = holidaysOnShabat.reduce((filtered, hol) => {
-            if (hol.getFlags() === flags.ROSH_CHODESH || hol.getFlags() === flags.SPECIAL_SHABBAT)
+        let shabatReading = holidaysOnShabat.reduce((filtered, hol) => {
+            if (hol.getFlags() === EventsTypes.ROSH_CHODESH || hol.getFlags() === EventsTypes.SPECIAL_SHABBAT)
                 filtered.push(hol.render('he'));
             return filtered;
         }, []);
@@ -155,11 +155,11 @@ async function MatchBookToDay(day, book, booksForWeek, toraBooks, hasAzcara = fa
 
 function getUpcomingParasha(hebDate) {
     const parashot = new hebcore.Sedra(hebDate.getFullYear(), true);
-    const upcomingParasha = parashot.getString(hebDate, 'he');
-    return upcomingParasha;
+    return parashot.getString(hebDate, 'he');
 }
 
 function getHolidaysBetweenDates(startDate, endDate){
+
     let day = startDate;
     var events = [];
     while (!day.isSameDate(endDate)) {
@@ -169,7 +169,7 @@ function getHolidaysBetweenDates(startDate, endDate){
     
     events = events.flat(1);
     //filter falsy elements('undefined') and get only chag events(with sefer tora)
-    events = events.filter(event=> event && event.getFlags()%2 == 1 ) 
+    events = events.filter(event=> event && event.getFlags()%2 === 1 )
     events = events.map(ev=>ev.render('he') );
 
     return events;
@@ -177,7 +177,7 @@ function getHolidaysBetweenDates(startDate, endDate){
 
 /**
  * return all the holidays with sefer tora reading until shabat(inclusive)
- * @param {start Date for calc} calcDate 
+ * @param {HDate} hebDate - start Date for calc
  */
 function getEventsUntilShabat(hebDate) {
     let day = hebDate;
@@ -189,7 +189,7 @@ function getEventsUntilShabat(hebDate) {
 
     events = events.flat(1);
     //filter falsy elements('undefined') and get only chag events(with sefer tora)
-    events = events.filter(event=> event && event.getFlags()%2 == 1) 
+    events = events.filter(event=> event && event.getFlags()%2 === 1)
     events = events.map(ev=>ev.render('he') );
 
     return events;
@@ -209,13 +209,13 @@ async function getBooksHaveAzcara(startDate){
     try {
         //find all the books that has azcara next Week
         let booksWithAzcaraThisWeek = [];
-        
+
         for (const d of week) {
             let books = await ToraBook.find({});
             let booksWithAzcara =  books.filter(book=>{
                 return book.azcaraDates.some(date=>{
-                   return date.month== d.month &&
-                    date.day == d.day;
+                   return date.month === d.month &&
+                    date.day === d.day;
                 });
             });    
             booksWithAzcaraThisWeek.push(booksWithAzcara);

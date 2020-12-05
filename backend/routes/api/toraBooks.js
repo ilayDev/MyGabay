@@ -10,7 +10,7 @@ var bookForShabatCache = {
 };
 
 router.get('/', async(req,res)=>{
-    var books = await ToraBook.find({});
+    const books = await ToraBook.find({});
     res.status(200).json(books);
 })
 
@@ -21,7 +21,7 @@ async function addNewToraBook(req,res,next){
     let dates= req.body.azcaraDates;
     let azcaraDates = [];
     dates.forEach(date => {
-        let azcara = new hebcal.HDate(date.day,date.month,date.year); 
+        let azcara = new hebcal.HDate(date.day,date.month,date.year);
         azcaraDates.push(azcara);
     });
 
@@ -65,7 +65,7 @@ function isAlreadyCached()
 }
 
 function saveBookInCache(choosenBook)
-{   
+{
     let today = new hebcal.HDate();
     let nextParasha = today.getSedra('h');
     bookForShabatCache = {
@@ -76,11 +76,11 @@ function saveBookInCache(choosenBook)
 
 
 router.get('/bookForShabat',getBookFromCache ,getBooksHaveAzcara ,async(req,res)=>{
-    if(typeof res.books == 'undefined' || res.books.length == 0 )
+    if(typeof res.books == 'undefined' || res.books.length === 0 )
     {
         res.books = await ToraBook.find({});
     }
-    
+
     let choosenBook = res.books.reduce((prev, curr)=> {
         return prev.usageScore < curr.usageScore ? prev : curr;
     });
@@ -108,15 +108,15 @@ async function getBooksHaveAzcara(req,res,next) {
     try {
         //find all the books that has azcara next Week
         let booksWithAzcaraThisWeek = [];
-        
+
         for (const d of week) {
             let books = await ToraBook.find({});
             let booksWithAzcara =  books.filter(book=>{
                 return book.azcaraDates.some(date=>{
-                   return date.month== d.month &&
-                    date.day == d.day;
+                   return date.month === d.month &&
+                    date.day === d.day;
                 });
-            });    
+            });
             booksWithAzcaraThisWeek.push(booksWithAzcara);
         }
         res.books =booksWithAzcaraThisWeek.flat(1);

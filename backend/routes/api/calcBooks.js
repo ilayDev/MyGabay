@@ -1,5 +1,7 @@
 const calcBooks = require('../../logic/calcBooks');
-const router = require('./toraBooks');
+// const router = require('./toraBooks');
+const router = require('express').Router();
+
 const hebcore = require('@hebcal/core');
 router.get('/bookForWeek', async function(req,res){
     try{
