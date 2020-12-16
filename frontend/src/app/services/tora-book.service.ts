@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ToraBookService {
-  path = 'toraBooks'; 
+  path = 'toraBooks';
 
   constructor(private http: HttpClient) { }
 

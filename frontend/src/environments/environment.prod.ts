@@ -1,3 +1,4 @@
 export const environment = {
-  production: true
+  production: true,
+  api_url : 'http://host.docker.internal:4000/api/'
 };
