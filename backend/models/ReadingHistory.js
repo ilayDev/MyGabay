@@ -19,4 +19,4 @@ const ReadingHistoryScheme = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('ReadingHistory',ReadingHistoryScheme);
+module.exports = mongoose.model('ReadingHistory',ReadingHistoryScheme, "ReadingHistory");

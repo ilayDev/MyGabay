@@ -14,4 +14,4 @@ var ToraBookScheme = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('ToraBook',ToraBookScheme);
+module.exports = mongoose.model('ToraBook',ToraBookScheme, "ToraBooks");
