@@ -1,0 +1,43 @@
+<form (ngSubmit)="onSubmit()" class="container regular-font">
+  <div class="form-group row">
+    <div class="col-4">
+      <label>שם הספר</label>
+    </div>
+    <div class="col-8">
+      <
+      <input [(ngModel)]="bookOwner" name="owner" type="text" />
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="form-row">
+      <div class="col-12">
+        <label>תאריך אזכרה</label>
+      </div>
+      <div class="col-2">
+        <select [(ngModel)]="selectedDay" name="day" class="form-control">
+          <option *ngFor="let day of days">{{ day }}</option>
+        </select>
+      </div>
+      <div class="col-3">
+        <select [(ngModel)]="selectedMonth" name="month">
+          <option></option>
+          <option *ngFor="let month of months">{{ month }}</option>
+        </select>
+      </div>
+      <div class="col-5">
+        <input
+          type="number"
+          [(ngModel)]="selectedYear"
+          name="year"
+          placeholder="תשפ = 5780"
+        />
+      </div>
+    </div>
+  </div>
+  <!--  <div class="form-group row">-->
+  <button class="btn btn-primary" type="submit">שלח</button>
+  <button class="btn btn-primary" type="button" (click)="print()">
+    הדפס שדות
+  </button>
+  <!--  </div>-->
+</form>

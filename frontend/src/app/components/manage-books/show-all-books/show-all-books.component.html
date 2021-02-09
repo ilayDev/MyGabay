@@ -1,9 +1,7 @@
-<div >
+<div>
+  <h3>רשימת כל הספרים:</h3>
 
-    <h3>
-        רשימת כל הספרים:
-    </h3>
-
-    <app-show-book *ngFor="let book of toraBooks" [toraBook]= "book"> </app-show-book>
-
+  <app-show-book *ngFor="let book of toraBooks" [toraBook]="book">
+  </app-show-book>
+  <button (click)="printToConsole()">print to console</button>
 </div>

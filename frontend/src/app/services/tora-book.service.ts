@@ -4,19 +4,28 @@ import { environment } from 'src/environments/environment';
 import { ToraBook } from '../models';
 import { Observable } from 'rxjs';
 
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ToraBookService {
   path = 'toraBooks';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  getAllToraBooks(params: HttpParams = new HttpParams()): Observable<ToraBook[]>{
-    return this.http.get<ToraBook[]>(environment.api_url + this.path, { params } );
+  getAllToraBooks(
+    params: HttpParams = new HttpParams()
+  ): Observable<ToraBook[]> {
+    return this.http.get<ToraBook[]>(environment.api_url + this.path, {
+      params,
+    });
   }
 
-
-
+  addToraBook(
+    book: any,
+    params: HttpParams = new HttpParams()
+  ): Observable<ToraBook> {
+    return this.http.post<any>(environment.api_url + this.path, book, {
+      params,
+    });
+  }
 }

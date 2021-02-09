@@ -10,6 +10,9 @@ import { ShowBookComponent } from './components/manage-books/show-book/show-book
 import { HebDatePipe } from './pipes/hebDate.pipe';
 import { AppRoutingModule } from './app-routing.module';
 import { MainContainerComponent } from './components/main-page/main-container/main-container.component';
+import { AddBookComponent } from './components/manage-books/add-book/add-book.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ManageBooksContainerComponent } from './components/manage-books/manage-books-container/manage-books-container.component';
 
 @NgModule({
   declarations: [
@@ -19,14 +22,18 @@ import { MainContainerComponent } from './components/main-page/main-container/ma
     ShowAllBooksComponent,
     ShowBookComponent,
     HebDatePipe,
-    MainContainerComponent
+    MainContainerComponent,
+    AddBookComponent,
+    ManageBooksContainerComponent,
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
-    AppRoutingModule
+    AppRoutingModule,
+    ReactiveFormsModule,
+    FormsModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
