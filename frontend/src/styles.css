@@ -1,13 +1,17 @@
-*{
-  direction: rtl;
+.big-font{
   color: cadetblue;
   font-size: 1.5rem;
 
 }
 
-html{
-  direction: rtl;
+.regular-font{
+  color: aquamarine;
+  font-size: 1rem;
 }
 
-/*@import "../node_modules/bootstrap/dist/css/bootstrap.min.css";*/
+body{
+  margin-right: 2em;
+  text-align: right;
+}
+
 
