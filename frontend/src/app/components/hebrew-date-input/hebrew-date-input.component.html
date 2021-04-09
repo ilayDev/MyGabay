@@ -1,0 +1,26 @@
+<div (focusout)="onChange()">
+  <button (click)="deleteDate()" class="btn">&times;</button>
+  <label>
+    יום
+    <select [(ngModel)]="selectedDay">
+      <option *ngFor="let day of days; let i = index" [ngValue]="i">
+        {{ day }}
+      </option>
+    </select>
+  </label>
+  <label style="margin-right: 3%">
+    חודש
+    <select [(ngModel)]="selectedMonth">
+      <option *ngFor="let month of months; let i = index" [ngValue]="i">
+        {{ month }}
+      </option>
+    </select>
+  </label>
+  <label style="margin-right: 3%">
+    שנה
+    <input [(ngModel)]="selectedYear" type="number" min="5700" max="6000" />
+  </label>
+  {{ selectedDay }}
+  {{ selectedMonth }}
+  {{ selectedYear }}
+</div>

@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Days, Months } from '../../../models/hebDates';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { HebDateModel } from '../../../models/hebDates';
 import { ToraBookService } from '../../../services/tora-book.service';
 
 @Component({
@@ -8,13 +8,9 @@ import { ToraBookService } from '../../../services/tora-book.service';
   styleUrls: ['./add-book.component.css'],
 })
 export class AddBookComponent implements OnInit {
-  bookOwner;
-  months = Months.slice(1);
-  days = Days.slice(1);
-  selectedYear: string;
-  selectedMonth: string;
-  selectedDay: string;
-  selectedDay1 = 'בחר יום';
+  bookOwner: string;
+  azcaraDates: HebDateModel[] = [];
+  azcaraDates2: any[] = [];
   constructor(private toraBookService: ToraBookService) {}
 
   ngOnInit(): void {}
@@ -23,13 +19,7 @@ export class AddBookComponent implements OnInit {
     console.log('submit');
     const newBook = {
       name: this.bookOwner,
-      azcaraDates: [
-        {
-          month: this.selectedMonth,
-          day: this.selectedDay,
-          year: this.selectedYear,
-        },
-      ],
+      azcaraDates: [{}],
     };
 
     this.toraBookService
@@ -38,9 +28,36 @@ export class AddBookComponent implements OnInit {
   }
 
   print() {
-    console.log(this.selectedDay);
-    console.log(this.selectedMonth);
-    console.log(this.selectedYear);
-    console.log(this.bookOwner);
+    console.log('bookOwner is:', this.bookOwner);
+    console.log('azcaraDates are:', this.azcaraDates);
+  }
+
+  updateAzcaraDate(azcaraDate: HebDateModel, index: number) {
+    console.log('updated:', azcaraDate);
+    this.azcaraDates[index] = azcaraDate;
+    console.log('update azcara in index:', index);
+    console.log('azcaraDates is :', this.azcaraDates);
+  }
+
+  updateAzcaraDate2(azcaraDate: HebDateModel, index: number) {
+    this.azcaraDates[index] = azcaraDate;
+    console.log('update azcara in index:', index);
+    console.log('azcaraDates is :', this.azcaraDates);
+  }
+
+  addAzcaraDate() {
+    this.azcaraDates.push(undefined);
+    this.azcaraDates2.push(undefined);
+  }
+
+  deleteDate(i: number) {
+    console.log(this.azcaraDates);
+    console.log(i);
+    // this.azcaraDates = this.azcaraDates.slice(i, i + 1);
+    this.azcaraDates.splice(i - 1, 1);
+
+    // this.azcaraDates2 = this.azcaraDates2.slice(i, i + 1);
+    this.azcaraDates2.splice(i, 1);
+    console.log(this.azcaraDates);
   }
 }

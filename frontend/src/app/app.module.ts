@@ -13,6 +13,7 @@ import { MainContainerComponent } from './components/main-page/main-container/ma
 import { AddBookComponent } from './components/manage-books/add-book/add-book.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ManageBooksContainerComponent } from './components/manage-books/manage-books-container/manage-books-container.component';
+import { HebrewDateInputComponent } from './components/hebrew-date-input/hebrew-date-input.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { ManageBooksContainerComponent } from './components/manage-books/manage-
     MainContainerComponent,
     AddBookComponent,
     ManageBooksContainerComponent,
+    HebrewDateInputComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,5 +1,4 @@
 const Months = [
-  'חודש לא חוקי',
   'ניסן',
   'אייר',
   'סיון',
@@ -11,11 +10,10 @@ const Months = [
   'כסלו',
   'טבת',
   'שבט',
-  'אדר'
+  'אדר',
 ];
 
 const Days = [
-  'יום לא חוקי',
   'א',
   'ב',
   'ג',
@@ -45,7 +43,13 @@ const Days = [
   'כז',
   'כח',
   'כט',
-  'ל'
+  'ל',
 ];
 
-export {Months, Days};
+type HebDateModel = {
+  day: number;
+  month: number;
+  year: number;
+};
+
+export { Months, Days, HebDateModel };

@@ -11,3 +11,8 @@ nav a {
   nav a.active{
       color: #039be5;
   }
+
+  .vertical-container{
+    display: flex;
+    flex-direction: column ;
+  }

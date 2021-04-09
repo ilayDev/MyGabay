@@ -1,43 +1,68 @@
+<!--<form (ngSubmit)="onSubmit()" class="container regular-font">-->
+<!--  <div class="form-group row">-->
+<!--    <div class="col-2">-->
+<!--      <label>שם הספר</label>-->
+<!--    </div>-->
+<!--    <div class="col-1">-->
+<!--      <input [(ngModel)]="bookOwner" name="owner" type="text" />-->
+<!--    </div>-->
+<!--  </div>-->
+
+<!--  <div class="form-group">-->
+<!--    <div class="form-row">-->
+<!--      <div class="col-12">-->
+<!--        <label>תאריך אזכרה</label>-->
+<!--      </div>-->
+<!--      <div class="col-2">-->
+<!--        <select [(ngModel)]="selectedDay" name="day" class="form-control">-->
+<!--          <option *ngFor="let day of days">{{ day }}</option>-->
+<!--        </select>-->
+<!--      </div>-->
+<!--      <div class="col-3">-->
+<!--        <select [(ngModel)]="selectedMonth" name="month">-->
+<!--          <option></option>-->
+<!--          <option *ngFor="let month of months">{{ month }}</option>-->
+<!--        </select>-->
+<!--      </div>-->
+<!--      <div class="col-5">-->
+<!--        <input-->
+<!--          type="number"-->
+<!--          [(ngModel)]="selectedYear"-->
+<!--          name="year"-->
+<!--          placeholder="תשפ = 5780"-->
+<!--        />-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--  &lt;!&ndash;  <div class="form-group row">&ndash;&gt;-->
+<!--  <button class="btn btn-primary" type="submit">שלח</button>-->
+<!--  <button class="btn btn-primary" type="button" (click)="print()">-->
+<!--    הדפס שדות-->
+<!--  </button>-->
+<!--  &lt;!&ndash;  </div>&ndash;&gt;-->
+<!--</form>-->
+
 <form (ngSubmit)="onSubmit()" class="container regular-font">
-  <div class="form-group row">
-    <div class="col-4">
-      <label>שם הספר</label>
-    </div>
-    <div class="col-8">
-      <
-      <input [(ngModel)]="bookOwner" name="owner" type="text" />
-    </div>
-  </div>
-  <div class="form-group">
-    <div class="form-row">
-      <div class="col-12">
-        <label>תאריך אזכרה</label>
-      </div>
-      <div class="col-2">
-        <select [(ngModel)]="selectedDay" name="day" class="form-control">
-          <option *ngFor="let day of days">{{ day }}</option>
-        </select>
-      </div>
-      <div class="col-3">
-        <select [(ngModel)]="selectedMonth" name="month">
-          <option></option>
-          <option *ngFor="let month of months">{{ month }}</option>
-        </select>
-      </div>
-      <div class="col-5">
-        <input
-          type="number"
-          [(ngModel)]="selectedYear"
-          name="year"
-          placeholder="תשפ = 5780"
-        />
-      </div>
+  <label>
+    שם הספר
+    <input type="text" />
+  </label>
+  <div class="vertical-container">
+    <h6>תאריכי אזכרה</h6>
+    <button (click)="addAzcaraDate()">הוסף תאריך</button>
+    <div *ngFor="let azcaraDate of azcaraDates2; let i = index">
+      <app-hebrew-date-input
+        (newAzcaraDateEvent)="updateAzcaraDate($event, i)"
+        (delete)="deleteDate(i)"
+      ></app-hebrew-date-input>
+
+      <!--    {{ azcaraDates }}-->
     </div>
   </div>
-  <!--  <div class="form-group row">-->
-  <button class="btn btn-primary" type="submit">שלח</button>
-  <button class="btn btn-primary" type="button" (click)="print()">
-    הדפס שדות
-  </button>
-  <!--  </div>-->
+
+  <button (click)="print()">print</button>
 </form>
+
+<!--      [newAzcaraDateEvent]="updateAzcaraDate($event, i)"-->
+
+<!--      [azcaraDate]="{ val: azcaraDate }"-->
